@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Hub | Simulator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ============================================
+           FIREWORKS CANVAS STYLES
+           ============================================ */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        /* Profit/Loss animation */
+        .profit-flash {
+            animation: profitPulse 0.6s ease;
+        }
+        .loss-flash {
+            animation: lossPulse 0.6s ease;
+        }
+
+        @keyframes profitPulse {
+            0% { background-color: rgba(40, 167, 69, 0.3); }
+            100% { background-color: transparent; }
+        }
+        @keyframes lossPulse {
+            0% { background-color: rgba(220, 53, 69, 0.3); }
+            100% { background-color: transparent; }
+        }
+
+        /* Trade history scroll */
+        #tradeHistory {
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+        #tradeHistory .list-group-item {
+            padding: 0.4rem 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">📈 Trading Hub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="learn.html">Learn</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategies.html">Strategies</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="simulator.html">Simulator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="calendar.html">Calendar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="glossary.html">Glossary</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FIREWORKS CANVAS -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <h1 class="text-center mb-4">🎮 Paper Trading Simulator</h1>
+        <p class="text-center lead">Practice trading with <strong>$100,000 virtual cash</strong>. No risk, real learning.</p>
+
+        <div class="row">
+            <!-- Portfolio Panel -->
+            <div class="col-md-4 mb-4">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h3>💼 Your Portfolio</h3>
+                        <hr class="bg-light">
+                        <p><strong>Cash Balance:</strong> <span id="cashBalance" class="h4 text-success">100000.00</span> USD</p>
+                        <p><strong>Holdings Value:</strong> <span id="holdingsValue" class="h4 text-info">0.00</span> USD</p>
+                        <p><strong>Total Portfolio:</strong> <span id="totalPortfolio" class="h4 text-warning">100000.00</span> USD</p>
+                        <hr class="bg-light">
+                        <p><strong>Total P&L:</strong> <span id="totalPL" class="h4">0.00</span> USD</p>
+                        <hr class="bg-light">
+                        <h5>📊 Holdings</h5>
+                        <div id="holdingsList">
+                            <p class="text-muted">No positions yet. Buy a stock below!</p>
+                        </div>
+                        <button id="resetBtn" class="btn btn-outline-danger btn-sm w-100 mt-2">🔄 Reset Portfolio</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade Panel -->
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">📊 Execute Trade</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Stock Symbol</label>
+                                <select id="stockSelect" class="form-select">
+                                    <option value="AAPL,175.50">AAPL - Apple Inc. ($175.50)</option>
+                                    <option value="GOOGL,152.30">GOOGL - Alphabet ($152.30)</option>
+                                    <option value="MSFT,420.80">MSFT - Microsoft ($420.80)</option>
+                                    <option value="AMZN,186.90">AMZN - Amazon ($186.90)</option>
+                                    <option value="TSLA,178.50">TSLA - Tesla ($178.50)</option>
+                                    <option value="NVDA,135.20">NVDA - NVIDIA ($135.20)</option>
+                                    <option value="META,510.00">META - Meta ($510.00)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Shares</label>
+                                <input type="number" id="sharesInput" class="form-control" placeholder="Number of shares" min="1" value="10">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <button id="buyBtn" class="btn btn-success w-100">🟢 BUY</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button id="sellBtn" class="btn btn-danger w-100">🔴 SELL</button>
+                            </div>
+                        </div>
+                        <div id="tradeMessage" class="alert mt-3 d-none"></div>
+                        
+                        <!-- FIREWORKS TRIGGER BUTTON (Manual for demo) -->
+                        <button id="fireworksBtn" class="btn btn-warning w-100 mt-2">🎆 Celebrate! (Fireworks)</button>
+                    </div>
+                </div>
+
+                <!-- Live Prices Table -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>📈 Live Stock Prices <small class="text-muted">(simulated)</small></h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped mb-0" id="priceTable">
+                            <thead>
+                                <tr><th>Symbol</th><th>Price (USD)</th><th>Change</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>AAPL</td><td id="price_AAPL">$175.50</td><td class="text-success">+1.2%</td></tr>
+                                <tr><td>GOOGL</td><td id="price_GOOGL">$152.30</td><td class="text-success">+0.8%</td></tr>
+                                <tr><td>MSFT</td><td id="price_MSFT">$420.80</td><td class="text-danger">-0.3%</td></tr>
+                                <tr><td>AMZN</td><td id="price_AMZN">$186.90</td><td class="text-success">+2.1%</td></tr>
+                                <tr><td>TSLA</td><td id="price_TSLA">$178.50</td><td class="text-danger">-1.5%</td></tr>
+                                <tr><td>NVDA</td><td id="price_NVDA">$135.20</td><td class="text-success">+3.2%</td></tr>
+                                <tr><td>META</td><td id="price_META">$510.00</td><td class="text-success">+0.5%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Trade History -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>📜 Trade History</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="tradeHistory" class="list-group list-group-flush">
+                            <li class="list-group-item text-muted">No trades yet. Start trading!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2026 Trading Education Hub | Simulator for educational purposes only. Not financial advice.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ============================================ -->
+    <!-- FIREWORKS ENGINE                            -->
+    <!-- ============================================ -->
+    <script>
+        // ============================================
+        // FIREWORKS CANVAS ANIMATION
+        // ============================================
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        let fireworksActive = false;
+        let particles = [];
+        let animationId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.decay = 0.008 + Math.random() * 0.015;
+                this.size = Math.random() * 4 + 2;
+                this.gravity = 0.05;
+                this.trail = [];
+            }
+
+            update() {
+                this.trail.push({ x: this.x, y: this.y });
+                if (this.trail.length > 6) this.trail.shift();
+                
+                this.vx *= 0.99;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw(ctx) {
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const t = this.trail[i];
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, this.size * (i / this.trail.length) * 0.6, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color.replace('1)', this.alpha * (i / this.trail.length) + ')');
+                    ctx.fill();
+                }
+                
+                // Draw main particle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color.replace('1)', this.alpha + ')');
+                ctx.fill();
+            }
+        }
+
+        function createFirework(x, y) {
+            const colors = [
+                'rgba(255, 50, 50, 1)',
+                'rgba(255, 200, 50, 1)',
+                'rgba(50, 200, 255, 1)',
+                'rgba(50, 255, 100, 1)',
+                'rgba(255, 100, 200, 1)',
+                'rgba(200, 100, 255, 1)',
+                'rgba(255, 255, 100, 1)',
+                'rgba(50, 255, 255, 1)',
+                'rgba(255, 150, 50, 1)'
+            ];
+            
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const count = 70 + Math.random() * 80;
+            
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateFireworks() {
+            if (!fireworksActive) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Random new fireworks bursts
+            if (Math.random() < 0.06) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+                createFirework(x, y);
+            }
+            
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw(ctx);
+                if (particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            // Limit particles
+            if (particles.length > 800) {
+                particles.splice(0, particles.length - 800);
+            }
+            
+            animationId = requestAnimationFrame(animateFireworks);
+        }
+
+        // ---- Public functions to control fireworks ----
+        window.startFireworks = function(duration = 6000) {
+            if (fireworksActive) return;
+            
+            fireworksActive = true;
+            canvas.style.display = 'block';
+            
+            // Initial burst in center
+            createFirework(canvas.width / 2, canvas.height / 3);
+            setTimeout(() => createFirework(canvas.width / 3, canvas.height / 4), 200);
+            setTimeout(() => createFirework(canvas.width * 0.7, canvas.height / 4), 400);
+            
+            animateFireworks();
+            
+            // Auto-stop after duration
+            setTimeout(() => {
+                window.stopFireworks();
+            }, duration);
+        };
+
+        window.stopFireworks = function() {
+            fireworksActive = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            setTimeout(() => {
+                canvas.style.display = 'none';
+                particles = [];
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 500);
+        };
+
+        // ---- Manual fireworks button ----
+        document.getElementById('fireworksBtn').addEventListener('click', function() {
+            window.startFireworks(5000);
+            this.textContent = '🎆 Fireworks!';
+            setTimeout(() => {
+                this.textContent = '🎆 Celebrate! (Fireworks)';
+            }, 5000);
+        });
+    </script>
+
+    <!-- ============================================ -->
+    <!-- PAPER TRADING ENGINE                        -->
+    <!-- ============================================ -->
+    <script>
+        // ============================================
+        // TRADING SIMULATOR
+        // ============================================
+        
+        // Portfolio state
+        let portfolio = {
+            cash: 100000,
+            holdings: {} // symbol: { shares, avgPrice }
+        };
+
+        let tradeHistory = [];
+        let tradeCount = 0;
+
+        // Stock prices (simulated)
+        const stockPrices = {
+            AAPL: 175.50,
+            GOOGL: 152.30,
+            MSFT: 420.80,
+            AMZN: 186.90,
+            TSLA: 178.50,
+            NVDA: 135.20,
+            META: 510.00
+        };
+
+        // DOM references
+        const cashDisplay = document.getElementById('cashBalance');
+        const holdingsValueDisplay = document.getElementById('holdingsValue');
+        const totalPortfolioDisplay = document.getElementById('totalPortfolio');
+        const totalPLDisplay = document.getElementById('totalPL');
+        const holdingsList = document.getElementById('holdingsList');
+        const tradeHistoryList = document.getElementById('tradeHistory');
+        const tradeMessage = document.getElementById('tradeMessage');
+
+        // ---- Helper functions ----
+        function formatCurrency(amount) {
+            return amount.toFixed(2);
+        }
+
+        function getStockPrice(symbol) {
+            // Add small random fluctuation
+            const volatility = 0.005; // 0.5% random move
+            const change = (Math.random() - 0.5) * volatility * 2;
+            stockPrices[symbol] = Math.max(1, stockPrices[symbol] * (1 + change));
+            return stockPrices[symbol];
+        }
+
+        function updatePrices() {
+            const symbols = Object.keys(stockPrices);
+            symbols.forEach(sym => {
+                getStockPrice(sym);
+                const priceEl = document.getElementById(`price_${sym}`);
+                if (priceEl) {
+                    priceEl.textContent = `$${stockPrices[sym].toFixed(2)}`;
+                }
+            });
+        }
+
+        function getHoldingsValue() {
+            let total = 0;
+            for (const [symbol, data] of Object.entries(portfolio.holdings)) {
+                total += data.shares * stockPrices[symbol];
+            }
+            return total;
+        }
+
+        function getTotalPortfolio() {
+            return portfolio.cash + getHoldingsValue();
+        }
+
+        function getTotalPL() {
+            let total = 0;
+            for (const [symbol, data] of Object.entries(portfolio.holdings)) {
+                total += data.shares * (stockPrices[symbol] - data.avgPrice);
+            }
+            return total;
+        }
+
+        function updateUI() {
+            const holdingsVal = getHoldingsValue();
+            const totalVal = getTotalPortfolio();
+            const totalPL = getTotalPL();
+
+            cashDisplay.textContent = formatCurrency(portfolio.cash);
+            holdingsValueDisplay.textContent = formatCurrency(holdingsVal);
+            totalPortfolioDisplay.textContent = formatCurrency(totalVal);
+            
+            const plColor = totalPL >= 0 ? 'text-success' : 'text-danger';
+            totalPLDisplay.className = `h4 ${plColor}`;
+            totalPLDisplay.textContent = (totalPL >= 0 ? '+' : '') + formatCurrency(totalPL);
+
+            // Update holdings list
+            const keys = Object.keys(portfolio.holdings);
+            if (keys.length === 0) {
+                holdingsList.innerHTML = '<p class="text-muted">No positions yet. Buy a stock below!</p>';
+            } else {
+                let html = '';
+                keys.forEach(sym => {
+                    const data = portfolio.holdings[sym];
+                    const currentPrice = stockPrices[sym];
+                    const pl = data.shares * (currentPrice - data.avgPrice);
+                    const plClass = pl >= 0 ? 'text-success' : 'text-danger';
+                    html += `
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-1">
+                            <span><strong>${sym}</strong></span>
+                            <span>${data.shares} shares</span>
+                            <span>@ $${data.avgPrice.toFixed(2)}</span>
+                            <span class="${plClass}">${pl >= 0 ? '+' : ''}$${pl.toFixed(2)}</span>
+                        </div>
+                    `;
+                });
+                holdingsList.innerHTML = html;
+            }
+
+            // Update trade history
+            if (tradeHistory.length === 0) {
+                tradeHistoryList.innerHTML = '<li class="list-group-item text-muted">No trades yet. Start trading!</li>';
+            } else {
+                let html = '';
+                const recent = tradeHistory.slice(-10).reverse();
+                recent.forEach(trade => {
+                    const plClass = trade.pl >= 0 ? 'text-success' : 'text-danger';
+                    html += `
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>${trade.type} ${trade.shares} ${trade.symbol} @ $${trade.price.toFixed(2)}</span>
+                            <span class="${plClass}">${trade.pl >= 0 ? '+' : ''}$${trade.pl.toFixed(2)}</span>
+                        </li>
+                    `;
+                });
+                tradeHistoryList.innerHTML = html;
+            }
+        }
+
+        // ---- Execute Trade ----
+        function executeTrade(type, symbol, shares) {
+            const price = stockPrices[symbol];
+            
+            if (type === 'buy') {
+                const cost = price * shares;
+                if (cost > portfolio.cash) {
+                    showMessage('❌ Insufficient cash!', 'danger');
+                    return false;
+                }
+                
+                // Update holdings
+                if (portfolio.holdings[symbol]) {
+                    const existing = portfolio.holdings[symbol];
+                    const totalCost = existing.avgPrice * existing.shares + cost;
+                    existing.shares += shares;
+                    existing.avgPrice = totalCost / existing.shares;
+                } else {
+                    portfolio.holdings[symbol] = { shares, avgPrice: price };
+                }
+                
+                portfolio.cash -= cost;
+                
+                tradeHistory.push({
+                    type: 'BUY',
+                    symbol,
+                    shares,
+                    price,
+                    pl: 0
+                });
+                
+                showMessage(`✅ Bought ${shares} shares of ${symbol} at $${price.toFixed(2)}`, 'success');
+                
+            } else if (type === 'sell') {
+                if (!portfolio.holdings[symbol] || portfolio.holdings[symbol].shares < shares) {
+                    showMessage('❌ Not enough shares to sell!', 'danger');
+                    return false;
+                }
+                
+                const revenue = price * shares;
+                const existing = portfolio.holdings[symbol];
+                const pl = shares * (price - existing.avgPrice);
+                
+                existing.shares -= shares;
+                if (existing.shares === 0) {
+                    delete portfolio.holdings[symbol];
+                }
+                
+                portfolio.cash += revenue;
+                
+                tradeHistory.push({
+                    type: 'SELL',
+                    symbol,
+                    shares,
+                    price,
+                    pl: pl
+                });
+                
+                showMessage(`✅ Sold ${shares} shares of ${symbol} at $${price.toFixed(2)}`, 'success');
+                
+                // 🎆 FIREWORKS ON PROFIT!
+                if (pl > 0) {
+                    window.startFireworks(5000);
+                    showMessage(`🎉 PROFIT! +$${pl.toFixed(2)} on this trade! 🎆`, 'success');
+                } else if (pl < 0) {
+                    showMessage(`📉 Loss: -$${Math.abs(pl).toFixed(2)} on this trade. Keep learning!`, 'danger');
+                }
+                
+                tradeCount++;
+            }
+            
+            updateUI();
+            return true;
+        }
+
+        // ---- Show message ----
+        function showMessage(text, type = 'info') {
+            tradeMessage.className = `alert alert-${type} mt-3`;
+            tradeMessage.textContent = text;
+            tradeMessage.classList.remove('d-none');
+            
+            setTimeout(() => {
+                tradeMessage.classList.add('d-none');
+            }, 5000);
+        }
+
+        // ---- Reset Portfolio ----
+        function resetPortfolio() {
+            if (confirm('⚠️ Reset your portfolio? All holdings and history will be lost.')) {
+                portfolio.cash = 100000;
+                portfolio.holdings = {};
+                tradeHistory = [];
+                tradeCount = 0;
+                updateUI();
+                showMessage('🔄 Portfolio reset! You have $100,000 cash.', 'info');
+                // Stop any fireworks
+                window.stopFireworks();
+            }
+        }
+
+        // ---- Event Listeners ----
+        document.getElementById('buyBtn').addEventListener('click', function() {
+            const select = document.getElementById('stockSelect');
+            const [symbol, price] = select.value.split(',');
+            const shares = parseInt(document.getElementById('sharesInput').value) || 1;
+            
+            if (shares <= 0) {
+                showMessage('❌ Please enter a valid number of shares.', 'danger');
+                return;
+            }
+            
+            // Update price
+            getStockPrice(symbol);
+            executeTrade('buy', symbol, shares);
+        });
+
+        document.getElementById('sellBtn').addEventListener('click', function() {
+            const select = document.getElementById('stockSelect');
+            const [symbol, price] = select.value.split(',');
+            const shares = parseInt(document.getElementById('sharesInput').value) || 1;
+            
+            if (shares <= 0) {
+                showMessage('❌ Please enter a valid number of shares.', 'danger');
+                return;
+            }
+            
+            // Update price
+            getStockPrice(symbol);
+            executeTrade('sell', symbol, shares);
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', resetPortfolio);
+
+        // ---- Price simulator - updates every 3 seconds ----
+        function simulatePriceChanges() {
+            updatePrices();
+            updateUI();
+        }
+
+        // Initialize
+        updateUI();
+        setInterval(simulatePriceChanges, 3000);
+
+        // ---- Keyboard shortcut: Enter to trade ----
+        document.getElementById('sharesInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('buyBtn').click();
+            }
+        });
+
+        console.log('🎮 Trading Simulator loaded!');
+        console.log('📈 Try buying and selling stocks. Profit triggers fireworks! 🎆');
+    </script>
+
+</body>
+</html>

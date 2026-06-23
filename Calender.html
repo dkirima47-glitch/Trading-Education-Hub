@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Hub | Economic Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">📈 Trading Hub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="learning.html">Learning</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategy.html">Strategy</a></li>
+                    <li class="nav-item"><a class="nav-link" href="simulator.html">Simulator</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="Calender.html">Calendar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="glossary.html">Glossary</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h1 class="left">📅 Economic Calendar</h1>
+        <p class="text-center lead">Track important market-moving news events.</p>
+
+        <!-- Impact Filter Buttons (JavaScript Feature #2) -->
+        <div class="text-center mb-4">
+            <button class="btn btn-primary filter-btn active" data-filter="all">📊 All Events</button>
+            <button class="btn btn-outline-danger filter-btn" data-filter="High">🔥 High Impact</button>
+            <button class="btn btn-outline-warning filter-btn" data-filter="Medium">⚠️ Medium Impact</button>
+            <button class="btn btn-outline-secondary filter-btn" data-filter="Low">📉 Low Impact</button>
+        </div>
+
+        <!-- Responsive Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time (ET)</th>
+                        <th>Event</th>
+                        <th>Country</th>
+                        <th>Impact</th>
+                        <th>Previous</th>
+                        <th>Forecast</th>
+                    </tr>
+                </thead>
+                <tbody id="CalendarBody">
+                    <!-- High Impact Events -->
+                    <tr data-impact="High">
+                        <td>June 17, 2026</td>
+                        <td>8:30 AM</td>
+                        <td>CPI Inflation Data</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-danger">High</span></td>
+                        <td>3.4%</td>
+                        <td>3.2%</td>
+                    </tr>
+                    <tr data-impact="High">
+                        <td>June 18, 2026</td>
+                        <td>2:00 PM</td>
+                        <td>FOMC Rate Decision</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-danger">High</span></td>
+                        <td>5.50%</td>
+                        <td>5.50%</td>
+                    </tr>
+                    <tr data-impact="High">
+                        <td>June 20, 2026</td>
+                        <td>4:00 AM</td>
+                        <td>ECB Monetary Policy</td>
+                        <td>🇪🇺 Eurozone</td>
+                        <td><span class="badge bg-danger">High</span></td>
+                        <td>4.00%</td>
+                        <td>3.75%</td>
+                    </tr>
+                    <tr data-impact="High">
+                        <td>June 25, 2026</td>
+                        <td>8:30 AM</td>
+                        <td>GDP Quarterly Report</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-danger">High</span></td>
+                        <td>1.6%</td>
+                        <td>2.0%</td>
+                    </tr>
+
+                    <!-- Medium Impact Events -->
+                    <tr data-impact="Medium">
+                        <td>June 19, 2026</td>
+                        <td>8:30 AM</td>
+                        <td>Jobless Claims</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-warning">Medium</span></td>
+                        <td>215K</td>
+                        <td>220K</td>
+                    </tr>
+                    <tr data-impact="Medium">
+                        <td>June 23, 2026</td>
+                        <td>10:00 AM</td>
+                        <td>Consumer Confidence</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-warning">Medium</span></td>
+                        <td>102.5</td>
+                        <td>104.0</td>
+                    </tr>
+                    <tr data-impact="Medium">
+                        <td>June 26, 2026</td>
+                        <td>8:30 AM</td>
+                        <td>Durable Goods Orders</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-warning">Medium</span></td>
+                        <td>0.8%</td>
+                        <td>0.5%</td>
+                    </tr>
+
+                    <!-- Low Impact Events -->
+                    <tr data-impact="Low">
+                        <td>June 24, 2026</td>
+                        <td>9:45 AM</td>
+                        <td>PMI Manufacturing</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-secondary">Low</span></td>
+                        <td>52.3</td>
+                        <td>53.1</td>
+                    </tr>
+                    <tr data-impact="Low">
+                        <td>June 29, 2026</td>
+                        <td>10:00 AM</td>
+                        <td>Pending Home Sales</td>
+                        <td>🇺🇸 USA</td>
+                        <td><span class="badge bg-secondary">Low</span></td>
+                        <td>0.5%</td>
+                        <td>0.8%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Event count summary (extra polish) -->
+        <div class="text-center mt-3">
+            <p id="eventCount" class="text-muted">Showing all events</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2026 Trading Education Hub | Economic data for simulation purposes only.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ================================================
+        // FILTER FUNCTIONALITY - JavaScript Feature #2
+        // ================================================
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                const rows = document.querySelectorAll('#calendarBody tr');
+                let visibleCount = 0;
+
+                // Update button styles
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('btn-primary', 'active');
+                    btn.classList.add('btn-outline-danger', 'btn-outline-warning', 'btn-outline-secondary');
+                });
+                
+                // Apply correct class based on filter
+                if (filter === 'all') {
+                    this.classList.remove('btn-outline-danger', 'btn-outline-warning', 'btn-outline-secondary');
+                    this.classList.add('btn-primary', 'active');
+                } else if (filter === 'High') {
+                    this.classList.remove('btn-outline-danger', 'btn-outline-warning', 'btn-outline-secondary');
+                    this.classList.add('btn-danger', 'active');
+                } else if (filter === 'Medium') {
+                    this.classList.remove('btn-outline-danger', 'btn-outline-warning', 'btn-outline-secondary');
+                    this.classList.add('btn-warning', 'active');
+                } else if (filter === 'Low') {
+                    this.classList.remove('btn-outline-danger', 'btn-outline-warning', 'btn-outline-secondary');
+                    this.classList.add('btn-secondary', 'active');
+                }
+
+                // Filter rows
+                rows.forEach(row => {
+                    const impact = row.getAttribute('data-impact');
+                    if (filter === 'all' || impact === filter) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Update event count
+                const countMsg = document.getElementById('eventCount');
+                if (filter === 'all') {
+                    countMsg.textContent = `Showing all ${visibleCount} events`;
+                } else {
+                    countMsg.textContent = `Showing ${visibleCount} ${filter} impact event(s)`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

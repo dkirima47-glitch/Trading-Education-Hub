@@ -3,31 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Education Hub | Home</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Trading Hub | Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS (to be added later) -->
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .hero {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            padding: 80px 0;
-        }
-        footer {
-            background-color: #1a1a2e;
-            color: #ccc;
-            padding: 30px 0;
-            margin-top: 50px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Navigation Bar (Bootstrap Responsive) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.html">📈 Trading Hub</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -36,10 +19,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="learn.html">Learn</a></li>
-                    <li class="nav-item"><a class="nav-link" href="strategies.html">Strategies</a></li>
+                    <li class="nav-item"><a class="nav-link" href="learning.html">Learning</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategy.html">Strategy</a></li>
                     <li class="nav-item"><a class="nav-link" href="simulator.html">Simulator</a></li>
-                    <li class="nav-item"><a class="nav-link" href="calendar.html">Calendar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Calender.html">Calendar</a></li>
                     <li class="nav-item"><a class="nav-link" href="glossary.html">Glossary</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
@@ -52,9 +35,52 @@
         <div class="container text-center">
             <h1 class="display-4 fw-bold">Learn Trading. Practice Smart.</h1>
             <p class="lead mt-3">Educational resources, paper trading simulator, and market insights – all risk-free.</p>
-            <a href="learn.html" class="btn btn-primary btn-lg mt-3">Start Learning →</a>
+            <a href="learning.html" class="btn btn-primary btn-lg mt-3">Start Learning →</a>
         </div>
     </section>
+
+    <!-- Market Overview Cards -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Today's Market Snapshot</h2>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card text-center market-card">
+                    <div class="card-body">
+                        <h5>S&P 500</h5>
+                        <p class="h4 text-success">+0.8%</p>
+                        <p>5,432.10</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card text-center market-card">
+                    <div class="card-body">
+                        <h5>NASDAQ</h5>
+                        <p class="h4 text-success">+1.2%</p>
+                        <p>17,890.45</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card text-center market-card">
+                    <div class="card-body">
+                        <h5>EUR/USD</h5>
+                        <p class="h4 text-danger">-0.3%</p>
+                        <p>1.0842</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card text-center market-card">
+                    <div class="card-body">
+                        <h5>Bitcoin</h5>
+                        <p class="h4 text-success">+2.1%</p>
+                        <p>$67,890</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Features Section -->
     <div class="container my-5">
@@ -62,27 +88,27 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <h3>📚</h3>
+                        <div class="feature-icon">📚</div>
                         <h5 class="card-title">Educational Content</h5>
-                        <p class="card-text">Learn technical analysis, risk management, and trading psychology.</p>
+                        <p class="card-text">Learn technical analysis, risk management, and trading psychology from real-world examples.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <h3>🎮</h3>
+                        <div class="feature-icon">🎮</div>
                         <h5 class="card-title">Paper Trading Simulator</h5>
-                        <p class="card-text">Practice buying and selling stocks with virtual money – no risk.</p>
+                        <p class="card-text">Practice buying and selling stocks with $100,000 virtual money – zero risk.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <h3>📅</h3>
+                        <div class="feature-icon">📅</div>
                         <h5 class="card-title">Economic Calendar</h5>
-                        <p class="card-text">Track important news events that move the markets.</p>
+                        <p class="card-text">Track important news events like FOMC, CPI, and NFP that move the markets.</p>
                     </div>
                 </div>
             </div>
@@ -93,11 +119,11 @@
     <footer>
         <div class="container text-center">
             <p>&copy; 2026 Trading Education Hub | For educational purposes only. Not financial advice.</p>
-            <p>Web Application Development Project | First Commit: 15 June 2026</p>
+            <p><a href="contact.html" class="text-white-50">Contact Us</a> | <a href="#" class="text-white-50">Privacy Policy</a></p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
